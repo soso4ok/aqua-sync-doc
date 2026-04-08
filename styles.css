@@ -1,23 +1,35 @@
 /* AquaSync Documentation Styles */
+/* Clean, professional design with AquaSync color palette */
 
 :root {
-    --primary: #0066cc;
-    --primary-dark: #004d99;
-    --secondary: #00a3cc;
-    --accent: #00d4aa;
-    --bg-dark: #0a1929;
-    --bg-sidebar: #0d2137;
-    --bg-content: #f8fafc;
+    /* Primary Color Palette */
+    --deep-satellite-blue: #0A2463;
+    --galileo-teal: #3E92CC;
+    --signal-coral: #FF825C;
+    --data-white: #F4F7F6;
+    
+    /* Derived Colors */
+    --primary: var(--deep-satellite-blue);
+    --primary-light: #0d2d7a;
+    --secondary: var(--galileo-teal);
+    --accent: var(--signal-coral);
+    --bg-sidebar: var(--deep-satellite-blue);
+    --bg-content: var(--data-white);
     --bg-card: #ffffff;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-light: #94a3b8;
+    
+    /* Text Colors */
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a5568;
+    --text-light: #718096;
+    --text-inverse: #ffffff;
+    
+    /* Borders & Misc */
     --border: #e2e8f0;
     --code-bg: #1e293b;
     --success: #10b981;
     --warning: #f59e0b;
-    --danger: #ef4444;
-    --info: #3b82f6;
+    --danger: var(--signal-coral);
+    --info: var(--galileo-teal);
 }
 
 * {
@@ -52,18 +64,19 @@ body {
     align-items: center;
     gap: 0.75rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
     margin-bottom: 1.5rem;
 }
 
-.logo-icon {
-    font-size: 1.75rem;
+.logo-image {
+    height: 40px;
+    width: auto;
 }
 
 .logo-text {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--text-inverse);
     letter-spacing: -0.5px;
 }
 
@@ -78,7 +91,7 @@ body {
 .nav-menu a {
     display: block;
     padding: 0.6rem 1rem;
-    color: rgba(255,255,255,0.7);
+    color: rgba(255,255,255,0.75);
     text-decoration: none;
     border-radius: 6px;
     font-size: 0.9rem;
@@ -87,18 +100,18 @@ body {
 
 .nav-menu a:hover {
     background: rgba(255,255,255,0.1);
-    color: #fff;
+    color: var(--text-inverse);
 }
 
 .nav-menu a.active {
-    background: var(--primary);
-    color: #fff;
+    background: var(--secondary);
+    color: var(--text-inverse);
 }
 
 .nav-section {
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--text-light);
+    color: rgba(255,255,255,0.5);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-top: 1.5rem;
@@ -122,7 +135,7 @@ body {
 h1 {
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--bg-dark);
+    color: var(--primary);
     margin-bottom: 0.5rem;
     letter-spacing: -0.5px;
 }
@@ -134,7 +147,7 @@ h2 {
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--border);
+    border-bottom: 2px solid var(--secondary);
 }
 
 h3 {
@@ -148,6 +161,7 @@ h3 {
 h4 {
     font-size: 1rem;
     font-weight: 600;
+    color: var(--primary);
     margin-bottom: 0.5rem;
 }
 
@@ -165,7 +179,7 @@ p {
 /* Cards */
 .card {
     background: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 1.5rem;
     margin: 1.5rem 0;
     border: 1px solid var(--border);
@@ -174,17 +188,17 @@ p {
 
 .card.highlight {
     border-left: 4px solid var(--primary);
-    background: linear-gradient(135deg, #f0f7ff 0%, #fff 100%);
+    background: #ffffff;
 }
 
 .card.warning {
-    border-left: 4px solid var(--warning);
-    background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
+    border-left: 4px solid var(--accent);
+    background: #fff9f6;
 }
 
 .card.info {
-    border-left: 4px solid var(--info);
-    background: linear-gradient(135deg, #eff6ff 0%, #fff 100%);
+    border-left: 4px solid var(--secondary);
+    background: #f6fbff;
 }
 
 .card h3, .card h4 {
@@ -201,7 +215,7 @@ p {
 
 .feature-card {
     background: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 1.5rem;
     border: 1px solid var(--border);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -209,17 +223,12 @@ p {
 
 .feature-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-.feature-icon {
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 1rem;
+    box-shadow: 0 8px 25px rgba(10, 36, 99, 0.1);
+    border-color: var(--secondary);
 }
 
 .feature-card h4 {
-    color: var(--text-primary);
+    color: var(--primary);
     margin-bottom: 0.5rem;
 }
 
@@ -250,8 +259,8 @@ th, td {
 }
 
 th {
-    background: var(--bg-dark);
-    color: #fff;
+    background: var(--primary);
+    color: var(--text-inverse);
     font-weight: 600;
     font-size: 0.85rem;
     text-transform: uppercase;
@@ -268,7 +277,7 @@ tr:last-child td {
 }
 
 tr:hover td {
-    background: #f8fafc;
+    background: var(--bg-content);
 }
 
 /* Code Blocks */
@@ -381,15 +390,15 @@ p code, td code, li code {
 
 /* Formula Box */
 .formula {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-    color: #fff;
+    background: linear-gradient(135deg, var(--primary) 0%, #1a3a7a 100%);
+    color: var(--text-inverse);
     padding: 1.5rem;
     border-radius: 8px;
     margin: 1.5rem 0;
 }
 
 .formula h4 {
-    color: #94a3b8;
+    color: var(--secondary);
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -397,14 +406,14 @@ p code, td code, li code {
 }
 
 .formula p {
-    color: rgba(255,255,255,0.9);
+    color: rgba(255,255,255,0.95);
     margin-bottom: 0.5rem;
 }
 
 .formula p:last-child {
     margin-bottom: 0;
     font-size: 0.9rem;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 /* Term Definitions */
@@ -564,14 +573,21 @@ p code, td code, li code {
 /* Footer */
 footer {
     margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
+    padding: 2rem;
+    background: var(--primary);
+    color: var(--text-inverse);
     text-align: center;
+    border-radius: 8px;
 }
 
 footer p {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
+    color: rgba(255,255,255,0.85);
+}
+
+footer a {
+    color: var(--secondary);
 }
 
 /* Responsive */
@@ -641,52 +657,22 @@ html {
 .topic-card {
     display: block;
     background: var(--bg-card);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 1.25rem;
     text-decoration: none;
     border: 1px solid var(--border);
-    border-left: 4px solid var(--primary);
+    border-left: 4px solid var(--secondary);
     transition: all 0.2s ease;
 }
 
 .topic-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    border-left-color: var(--secondary);
-}
-
-.topic-card.topic-concepts { border-left-color: #8b5cf6; }
-.topic-card.topic-concepts:hover { background: linear-gradient(135deg, #f5f3ff 0%, #fff 100%); }
-
-.topic-card.topic-architecture { border-left-color: #06b6d4; }
-.topic-card.topic-architecture:hover { background: linear-gradient(135deg, #ecfeff 0%, #fff 100%); }
-
-.topic-card.topic-apis { border-left-color: #10b981; }
-.topic-card.topic-apis:hover { background: linear-gradient(135deg, #ecfdf5 0%, #fff 100%); }
-
-.topic-card.topic-science { border-left-color: #f59e0b; }
-.topic-card.topic-science:hover { background: linear-gradient(135deg, #fffbeb 0%, #fff 100%); }
-
-.topic-card.topic-flood { border-left-color: #3b82f6; }
-.topic-card.topic-flood:hover { background: linear-gradient(135deg, #eff6ff 0%, #fff 100%); }
-
-.topic-card.topic-gnss { border-left-color: #ec4899; }
-.topic-card.topic-gnss:hover { background: linear-gradient(135deg, #fdf2f8 0%, #fff 100%); }
-
-.topic-card.topic-data { border-left-color: #64748b; }
-.topic-card.topic-data:hover { background: linear-gradient(135deg, #f8fafc 0%, #fff 100%); }
-
-.topic-card.topic-ai { border-left-color: #ef4444; }
-.topic-card.topic-ai:hover { background: linear-gradient(135deg, #fef2f2 0%, #fff 100%); }
-
-.topic-icon {
-    font-size: 1.75rem;
-    display: block;
-    margin-bottom: 0.75rem;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 36, 99, 0.1);
+    border-left-color: var(--accent);
 }
 
 .topic-card h4 {
-    color: var(--text-primary);
+    color: var(--primary);
     margin-bottom: 0.5rem;
     font-size: 1.1rem;
 }

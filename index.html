@@ -11,7 +11,7 @@
 <body>
     <nav class="sidebar">
         <div class="logo">
-            <span class="logo-icon">💧</span>
+            <img src="logo.png" class="logo-image" alt="AquaSync Logo">
             <span class="logo-text">AquaSync</span>
         </div>
         <ul class="nav-menu">
@@ -55,7 +55,7 @@
             <p class="lead">A Developer-Focused Deep Dive into EU Space Data and Water Monitoring</p>
             
             <div class="card highlight">
-                <h3>📖 About This Guide</h3>
+                <h3>About This Guide</h3>
                 <p>This documentation explains how AquaSync is built on top of EU space infrastructure (Copernicus, Galileo, EGNOS) and the Copernicus Data Space Ecosystem (CDSE). It assumes <strong>no prior Earth Observation or biotechnology background</strong> and explains every term from a software developer's perspective.</p>
             </div>
 
@@ -64,12 +64,12 @@
             
             <div class="feature-grid">
                 <div class="feature-card">
-                    <span class="feature-icon">🛰️</span>
+                    
                     <h4>"Macro" Data: Satellites</h4>
                     <p>Copernicus satellites take repeated measurements of Earth's surface. Think of it as a global camera taking photos in different wavelengths every few days. We process these to detect water pollution patterns.</p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">📱</span>
+                    
                     <h4>"Micro" Data: Citizens</h4>
                     <p>People on the ground take geotagged photos of water bodies. These provide "ground truth" - actual visual confirmation of what the satellite sees from 700km above.</p>
                 </div>
@@ -78,7 +78,7 @@
             <h2>The Problem We're Solving</h2>
             <p>Satellites have a fundamental limitation called <strong>"pixel pollution"</strong>:</p>
             <div class="card info">
-                <h4>🔍 What is Pixel Pollution?</h4>
+                <h4>What is Pixel Pollution?</h4>
                 <p>A satellite pixel might be 10×10 meters. Near coastlines or rivers, a single pixel often contains both land and water. This "mixed pixel" makes it impossible to detect small-scale chemical spills or early-stage algal blooms. The land reflectance contaminates the water signal.</p>
             </div>
             <p>Meanwhile, citizens see pollution on the ground but have no way to report it with proper verification. AquaSync bridges this gap by cross-referencing satellite anomalies with verified citizen reports.</p>
@@ -95,42 +95,42 @@
             <h2>Documentation Topics</h2>
             <div class="topic-grid">
                 <a href="#eo-basics" class="topic-card topic-concepts">
-                    <span class="topic-icon">🛰️</span>
+                    
                     <h4>Core Concepts</h4>
                     <p>Earth Observation, GNSS, Sentinel missions explained for developers</p>
                 </a>
                 <a href="#tech-stack" class="topic-card topic-architecture">
-                    <span class="topic-icon">🏗️</span>
+                    
                     <h4>Architecture</h4>
                     <p>Tech stack, system design, and data flow</p>
                 </a>
                 <a href="#cdse-api" class="topic-card topic-apis">
-                    <span class="topic-icon">🔌</span>
+                    
                     <h4>CDSE &amp; APIs</h4>
                     <p>STAC, Sentinel Hub, openEO datacubes</p>
                 </a>
                 <a href="#spectral-analysis" class="topic-card topic-science">
-                    <span class="topic-icon">🔬</span>
+                    
                     <h4>Water Quality Science</h4>
                     <p>Spectral analysis, indices, biochemical indicators</p>
                 </a>
                 <a href="#flood-services" class="topic-card topic-flood">
-                    <span class="topic-icon">🌊</span>
+                    
                     <h4>Flood Monitoring</h4>
                     <p>CEMS, GloFAS, SAR analysis</p>
                 </a>
                 <a href="#galileo-has" class="topic-card topic-gnss">
-                    <span class="topic-icon">📍</span>
+                    
                     <h4>GNSS Authentication</h4>
                     <p>Galileo HAS, OSNMA anti-spoofing</p>
                 </a>
                 <a href="#postgis" class="topic-card topic-data">
-                    <span class="topic-icon">🗄️</span>
+                    
                     <h4>Data Engineering</h4>
                     <p>PostGIS, GDAL, API authentication</p>
                 </a>
                 <a href="#ai-verification" class="topic-card topic-ai">
-                    <span class="topic-icon">🤖</span>
+                    
                     <h4>AI Verification</h4>
                     <p>Multimodal AI, fraud detection</p>
                 </a>
@@ -177,7 +177,7 @@
             <h2>Key Terms Explained</h2>
             
             <div class="term-definition">
-                <h4>📦 Product Levels (L0, L1, L2)</h4>
+                <h4>Product Levels (L0, L1, L2)</h4>
                 <p><strong>Level 0:</strong> Raw sensor data (you never use this)<br>
                 <strong>Level 1:</strong> Radiometrically corrected + georeferenced (basic image)<br>
                 <strong>Level 2:</strong> Atmospherically corrected ("what the ground actually looks like" vs "what the sensor saw through atmosphere")</p>
@@ -185,7 +185,7 @@
             </div>
 
             <div class="term-definition">
-                <h4>🎨 Spectral Bands</h4>
+                <h4>Spectral Bands</h4>
                 <p>Instead of RGB, satellites have many "bands" - each capturing a specific wavelength range. Sentinel-2 has 13 bands:</p>
                 <ul>
                     <li><code>B01</code> - Coastal aerosol (443nm) - useful for haze correction</li>
@@ -200,7 +200,7 @@
             </div>
 
             <div class="term-definition">
-                <h4>📐 Spatial Resolution</h4>
+                <h4>Spatial Resolution</h4>
                 <p>How big is one pixel on the ground?</p>
                 <ul>
                     <li><strong>Sentinel-2:</strong> 10m (RGB, NIR), 20m (red-edge, SWIR), 60m (atmospheric bands)</li>
@@ -211,7 +211,7 @@
             </div>
 
             <div class="term-definition">
-                <h4>⏱️ Temporal Resolution (Revisit Time)</h4>
+                <h4>Temporal Resolution (Revisit Time)</h4>
                 <p>How often does the satellite pass over the same spot?</p>
                 <ul>
                     <li><strong>Sentinel-2:</strong> Every 2-3 days at mid-latitudes (but may be cloudy)</li>
@@ -270,14 +270,14 @@
             <h2>Key Concepts</h2>
             
             <div class="term-definition">
-                <h4>🎯 RTK vs PPP</h4>
+                <h4>RTK vs PPP</h4>
                 <p><strong>RTK (Real-Time Kinematic):</strong> Requires a nearby base station + cellular connection. Very accurate (~2cm) but infrastructure-dependent.<br>
                 <strong>PPP (Precise Point Positioning):</strong> Uses satellite-broadcast corrections. Works anywhere but needs convergence time (~5 min).</p>
                 <p><em>Galileo HAS uses PPP - crucial for remote areas where there's no cellular coverage (e.g., river basins, disaster zones).</em></p>
             </div>
 
             <div class="term-definition">
-                <h4>🔐 Spoofing</h4>
+                <h4>Spoofing</h4>
                 <p>An attacker broadcasts fake GNSS signals to make a receiver report the wrong location. This is why OSNMA (authentication) matters - it cryptographically signs the navigation messages so receivers can verify they're genuine.</p>
             </div>
         </section>
@@ -385,9 +385,9 @@
             <h2>Sentinel-1: Radar for All-Weather Monitoring</h2>
             <p>SAR (Synthetic Aperture Radar) sends microwave pulses and measures the echo. Unlike optical sensors:</p>
             <ul>
-                <li>✅ Works through clouds, smoke, and at night</li>
-                <li>✅ Water surfaces appear very dark (specular reflection away from sensor)</li>
-                <li>⚠️ Urban areas create "double-bounce" - floods in cities look bright, not dark</li>
+                <li>Works through clouds, smoke, and at night</li>
+                <li>Water surfaces appear very dark (specular reflection away from sensor)</li>
+                <li>Urban areas create "double-bounce" - floods in cities look bright, not dark</li>
             </ul>
 
             <h3>SAR Pre-processing Pipeline</h3>
@@ -544,11 +544,11 @@
             <h2>The Paradigm Shift</h2>
             <div class="feature-grid">
                 <div class="feature-card" style="border-left: 4px solid #ef4444;">
-                    <h4>❌ Old Way (Open Access Hub)</h4>
+                    <h4>Old Way (Open Access Hub)</h4>
                     <p>Download 1GB SAFE files → Process locally → Store results. Slow, bandwidth-heavy, requires big local storage.</p>
                 </div>
                 <div class="feature-card" style="border-left: 4px solid #10b981;">
-                    <h4>✅ New Way (CDSE)</h4>
+                    <h4>New Way (CDSE)</h4>
                     <p>Send evalscript + AOI + time range → Server processes → Returns 50KB PNG or JSON stats. Fast, minimal bandwidth.</p>
                 </div>
             </div>
@@ -633,7 +633,7 @@ const data = await response.json();
             </div>
 
             <div class="card info">
-                <h4>💡 Why Filter at Catalog Level?</h4>
+                <h4>Why Filter at Catalog Level?</h4>
                 <p>Cloud filtering in STAC saves processing credits. If you request a processing job for a cloudy day, you'll pay for computation but get useless results. Filter first, then process only useful scenes.</p>
             </div>
 
@@ -786,7 +786,7 @@ const response = await axios.post(
             </div>
 
             <div class="card info">
-                <h4>📊 sampleType Explained</h4>
+                <h4>sampleType Explained</h4>
                 <p><code>FLOAT32</code>: For precise index values (-1 to +1). Use for NDWI, Chlorophyll.<br>
                 <code>UINT16</code>: For integer values (0-65535). Use when mapping to discrete classes or for compact storage.</p>
             </div>
@@ -916,7 +916,7 @@ cube = cube.apply(process=openeo.UDF(apply_udf))</code></pre>
             
             <h2>The Physics of Remote Sensing</h2>
             <div class="card highlight">
-                <h4>🌊 Why Water Looks Dark in NIR</h4>
+                <h4>Why Water Looks Dark in NIR</h4>
                 <p>Water strongly absorbs near-infrared radiation. When the satellite measures NIR (B08), water appears very dark while vegetation and soil appear bright. This contrast is the foundation of water detection indices.</p>
             </div>
 
@@ -993,7 +993,7 @@ index = (band_that_reflects - band_that_absorbs) / (band_that_reflects + band_th
             <h2>Red-Edge: The Algae Detection Sweet Spot</h2>
             <p>Bands B05-B07 (705-783nm) capture the "red-edge" - a steep rise in vegetation/algae reflectance:</p>
             <div class="card info">
-                <h4>🔬 Phycocyanin Detection</h4>
+                <h4>Phycocyanin Detection</h4>
                 <p>Cyanobacteria (blue-green algae) contain a pigment called <strong>phycocyanin</strong> that creates a reflectance "bump" between 705-740nm. This signature distinguishes toxic cyanobacteria from harmless green algae. The Maximum Peak Height (MPH) index exploits this.</p>
             </div>
         </section>
@@ -1040,7 +1040,7 @@ index = (band_that_reflects - band_that_absorbs) / (band_that_reflects + band_th
             </div>
 
             <div class="card warning">
-                <h4>⚠️ Threshold Tuning</h4>
+                <h4>Threshold Tuning</h4>
                 <p>The 0.42 threshold works for most clear water. Highly turbid or shallow water may need lower thresholds (~0.3). Validate against known water bodies in your AOI.</p>
             </div>
         </section>
@@ -1208,7 +1208,7 @@ function evaluatePixel(sample) {
             <p>GloFAS couples ECMWF weather forecasts with the LISFLOOD hydrological model:</p>
             
             <div class="term-definition">
-                <h4>🌊 Return Period</h4>
+                <h4>Return Period</h4>
                 <p>A "10-year return period flood" means the discharge level that statistically occurs once every 10 years. GloFAS provides thresholds for 2, 5, 10, 20-year events.</p>
                 <p><em>When river discharge exceeds the 2-year threshold, AquaSync adjusts the Pollution Severity Index because high flows dilute pollutants.</em></p>
             </div>
@@ -1217,7 +1217,7 @@ function evaluatePixel(sample) {
             <p>Global Flood Monitoring uses Sentinel-1 radar to detect water extent regardless of clouds:</p>
 
             <div class="card info">
-                <h4>🎯 Why This Matters for AquaSync</h4>
+                <h4>Why This Matters for AquaSync</h4>
                 <p>If high turbidity coincides with a GFM-detected flood, AquaSync classifies it as <strong>"Hydrological Runoff"</strong> instead of <strong>"Point-Source Pollution"</strong>. This dramatically reduces false alarms for regulators.</p>
             </div>
         </section>
@@ -1275,7 +1275,7 @@ function evaluatePixel(sample) {
             
             <h2>How HAS Works</h2>
             <div class="term-definition">
-                <h4>📡 Precise Point Positioning (PPP)</h4>
+                <h4>Precise Point Positioning (PPP)</h4>
                 <p>Standard GPS computes position from signal travel time, limited by satellite orbit/clock errors and atmospheric delays.</p>
                 <p>PPP uses correction data (precise orbits, clocks, biases) to remove these errors. Traditional PPP services send corrections via internet. <strong>HAS broadcasts corrections directly from Galileo satellites on the E6-B signal.</strong></p>
             </div>
@@ -1311,7 +1311,7 @@ function evaluatePixel(sample) {
             </div>
 
             <div class="card highlight">
-                <h4>💡 Why This Matters</h4>
+                <h4>Why This Matters</h4>
                 <p>In disaster zones, cellular networks are often down. RTK systems fail. But HAS keeps working because corrections come <strong>directly from space</strong> - no ground infrastructure needed.</p>
             </div>
         </section>
@@ -1323,7 +1323,7 @@ function evaluatePixel(sample) {
             
             <h2>The Spoofing Threat</h2>
             <div class="card warning">
-                <h4>⚠️ Why Authentication Matters</h4>
+                <h4>Why Authentication Matters</h4>
                 <p>A sophisticated attacker can broadcast fake GNSS signals that overpower real ones. Your receiver reports a false location. For AquaSync, this could let someone report pollution at wrong coordinates to misdirect enforcement or hide illegal discharges.</p>
             </div>
 
@@ -1567,7 +1567,7 @@ For each finding, describe its location in the image and confidence level.</code
             </div>
 
             <div class="card highlight">
-                <h4>💡 No Retraining Required</h4>
+                <h4>No Retraining Required</h4>
                 <p>When a new pollution type appears (e.g., microplastic sheens), just update the prompt. Traditional CV would require collecting labeled samples and retraining.</p>
             </div>
 
@@ -1598,7 +1598,7 @@ For each finding, describe its location in the image and confidence level.</code
             
             <h2>Moiré Pattern Detection</h2>
             <div class="card info">
-                <h4>🔬 What is Moiré?</h4>
+                <h4>What is Moiré?</h4>
                 <p>When a camera photographs a screen, the camera's sensor grid interferes with the display's pixel grid, creating wavy interference patterns called <strong>moiré</strong>. These are invisible to the naked eye but detectable by algorithms.</p>
             </div>
 
