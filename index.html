@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaSync Developer Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <span class="logo-icon">💧</span>
+            <span class="logo-text">AquaSync</span>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#overview" class="active">Overview</a></li>
+            <li class="nav-section">Core Concepts</li>
+            <li><a href="#eo-basics">Earth Observation (EO)</a></li>
+            <li><a href="#gnss-basics">GNSS &amp; Positioning</a></li>
+            <li><a href="#sentinel-missions">Sentinel Missions</a></li>
+            <li class="nav-section">Architecture</li>
+            <li><a href="#tech-stack">Tech Stack</a></li>
+            <li><a href="#system-architecture">System Architecture</a></li>
+            <li class="nav-section">CDSE &amp; APIs</li>
+            <li><a href="#cdse-api">CDSE Ecosystem</a></li>
+            <li><a href="#sentinel-hub">Sentinel Hub APIs</a></li>
+            <li><a href="#openeo">openEO Datacubes</a></li>
+            <li class="nav-section">Water Quality Science</li>
+            <li><a href="#spectral-analysis">Spectral Analysis</a></li>
+            <li><a href="#water-indices">Water Quality Indices</a></li>
+            <li><a href="#biochemical-indicators">Biochemical Indicators</a></li>
+            <li class="nav-section">Flood Monitoring</li>
+            <li><a href="#flood-services">CEMS &amp; GloFAS</a></li>
+            <li><a href="#sar-analysis">SAR Analysis</a></li>
+            <li class="nav-section">GNSS Authentication</li>
+            <li><a href="#galileo-has">Galileo HAS</a></li>
+            <li><a href="#osnma">OSNMA Protocol</a></li>
+            <li class="nav-section">Data Engineering</li>
+            <li><a href="#postgis">PostGIS &amp; GDAL</a></li>
+            <li><a href="#authentication">API Authentication</a></li>
+            <li class="nav-section">AI Verification</li>
+            <li><a href="#ai-verification">Multimodal AI</a></li>
+            <li><a href="#fraud-detection">Fraud Detection</a></li>
+            <li class="nav-section">Reference</li>
+            <li><a href="#glossary">Glossary</a></li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <!-- Overview Section -->
+        <section id="overview" class="section">
+            <h1>AquaSync Developer Documentation</h1>
+            <p class="lead">A Developer-Focused Deep Dive into EU Space Data and Water Monitoring</p>
+            
+            <div class="card highlight">
+                <h3>📖 About This Guide</h3>
+                <p>This documentation explains how AquaSync is built on top of EU space infrastructure (Copernicus, Galileo, EGNOS) and the Copernicus Data Space Ecosystem (CDSE). It assumes <strong>no prior Earth Observation or biotechnology background</strong> and explains every term from a software developer's perspective.</p>
+            </div>
+
+            <h2>What is AquaSync?</h2>
+            <p>AquaSync is a data pipeline that combines two very different data sources to monitor water quality:</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🛰️</span>
+                    <h4>"Macro" Data: Satellites</h4>
+                    <p>Copernicus satellites take repeated measurements of Earth's surface. Think of it as a global camera taking photos in different wavelengths every few days. We process these to detect water pollution patterns.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h4>"Micro" Data: Citizens</h4>
+                    <p>People on the ground take geotagged photos of water bodies. These provide "ground truth" - actual visual confirmation of what the satellite sees from 700km above.</p>
+                </div>
+            </div>
+
+            <h2>The Problem We're Solving</h2>
+            <p>Satellites have a fundamental limitation called <strong>"pixel pollution"</strong>:</p>
+            <div class="card info">
+                <h4>🔍 What is Pixel Pollution?</h4>
+                <p>A satellite pixel might be 10×10 meters. Near coastlines or rivers, a single pixel often contains both land and water. This "mixed pixel" makes it impossible to detect small-scale chemical spills or early-stage algal blooms. The land reflectance contaminates the water signal.</p>
+            </div>
+            <p>Meanwhile, citizens see pollution on the ground but have no way to report it with proper verification. AquaSync bridges this gap by cross-referencing satellite anomalies with verified citizen reports.</p>
+
+            <h2>High-Level Data Flow</h2>
+            <p>The "aha moment" is when a citizen report appears on the map <strong>exactly on top of</strong> a satellite-detected anomaly, proving that both data sources agree:</p>
+            <ol>
+                <li><strong>Satellite detects anomaly</strong> → Suspicion Map shows "something unusual here"</li>
+                <li><strong>Citizen snaps photo</strong> → Geotagged, timestamped evidence uploaded</li>
+                <li><strong>Data fusion</strong> → Backend checks if citizen coordinates intersect satellite anomaly</li>
+                <li><strong>Alert generated</strong> → If both agree, high-priority alert for authorities</li>
+            </ol>
+
+            <h2>Documentation Topics</h2>
+            <div class="topic-grid">
+                <a href="#eo-basics" class="topic-card topic-concepts">
+                    <span class="topic-icon">🛰️</span>
+                    <h4>Core Concepts</h4>
+                    <p>Earth Observation, GNSS, Sentinel missions explained for developers</p>
+                </a>
+                <a href="#tech-stack" class="topic-card topic-architecture">
+                    <span class="topic-icon">🏗️</span>
+                    <h4>Architecture</h4>
+                    <p>Tech stack, system design, and data flow</p>
+                </a>
+                <a href="#cdse-api" class="topic-card topic-apis">
+                    <span class="topic-icon">🔌</span>
+                    <h4>CDSE &amp; APIs</h4>
+                    <p>STAC, Sentinel Hub, openEO datacubes</p>
+                </a>
+                <a href="#spectral-analysis" class="topic-card topic-science">
+                    <span class="topic-icon">🔬</span>
+                    <h4>Water Quality Science</h4>
+                    <p>Spectral analysis, indices, biochemical indicators</p>
+                </a>
+                <a href="#flood-services" class="topic-card topic-flood">
+                    <span class="topic-icon">🌊</span>
+                    <h4>Flood Monitoring</h4>
+                    <p>CEMS, GloFAS, SAR analysis</p>
+                </a>
+                <a href="#galileo-has" class="topic-card topic-gnss">
+                    <span class="topic-icon">📍</span>
+                    <h4>GNSS Authentication</h4>
+                    <p>Galileo HAS, OSNMA anti-spoofing</p>
+                </a>
+                <a href="#postgis" class="topic-card topic-data">
+                    <span class="topic-icon">🗄️</span>
+                    <h4>Data Engineering</h4>
+                    <p>PostGIS, GDAL, API authentication</p>
+                </a>
+                <a href="#ai-verification" class="topic-card topic-ai">
+                    <span class="topic-icon">🤖</span>
+                    <h4>AI Verification</h4>
+                    <p>Multimodal AI, fraud detection</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Earth Observation Basics -->
+        <section id="eo-basics" class="section">
+            <h1>Earth Observation (EO) for Developers</h1>
+            <p>If you've never worked with satellite data, think of it as a REST API that returns images and measurements instead of JSON.</p>
+            
+            <h2>What Satellites Actually Measure</h2>
+            <p>Satellites don't just take "photos." They measure <strong>electromagnetic radiation</strong> at different wavelengths:</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>What It Measures</th>
+                            <th>Developer Analogy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Optical (Sentinel-2)</strong></td>
+                            <td>Reflected sunlight in visible + infrared bands</td>
+                            <td>Like a camera with 13 color channels instead of RGB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Radar/SAR (Sentinel-1)</strong></td>
+                            <td>Microwave backscatter (satellite sends signal, measures echo)</td>
+                            <td>Like sonar, but with radio waves. Works through clouds and at night.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ocean Color (Sentinel-3)</strong></td>
+                            <td>21 spectral bands optimized for water</td>
+                            <td>Lower resolution but more "color depth" for water analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Key Terms Explained</h2>
+            
+            <div class="term-definition">
+                <h4>📦 Product Levels (L0, L1, L2)</h4>
+                <p><strong>Level 0:</strong> Raw sensor data (you never use this)<br>
+                <strong>Level 1:</strong> Radiometrically corrected + georeferenced (basic image)<br>
+                <strong>Level 2:</strong> Atmospherically corrected ("what the ground actually looks like" vs "what the sensor saw through atmosphere")</p>
+                <p><em>For water quality, always use Level 2 (L2A) products - the atmosphere has been "removed" from the measurements.</em></p>
+            </div>
+
+            <div class="term-definition">
+                <h4>🎨 Spectral Bands</h4>
+                <p>Instead of RGB, satellites have many "bands" - each capturing a specific wavelength range. Sentinel-2 has 13 bands:</p>
+                <ul>
+                    <li><code>B01</code> - Coastal aerosol (443nm) - useful for haze correction</li>
+                    <li><code>B02</code> - Blue (490nm)</li>
+                    <li><code>B03</code> - Green (560nm)</li>
+                    <li><code>B04</code> - Red (665nm)</li>
+                    <li><code>B05-B07</code> - Red-edge (705-783nm) - critical for vegetation/algae</li>
+                    <li><code>B08</code> - NIR (842nm) - Near-infrared, strongly absorbed by water</li>
+                    <li><code>B11-B12</code> - SWIR (1610-2190nm) - Short-wave infrared</li>
+                </ul>
+                <p><em>Water strongly absorbs NIR. This is why comparing Green vs NIR tells us "is this pixel water or land?"</em></p>
+            </div>
+
+            <div class="term-definition">
+                <h4>📐 Spatial Resolution</h4>
+                <p>How big is one pixel on the ground?</p>
+                <ul>
+                    <li><strong>Sentinel-2:</strong> 10m (RGB, NIR), 20m (red-edge, SWIR), 60m (atmospheric bands)</li>
+                    <li><strong>Sentinel-3:</strong> 300m (designed for oceans/large lakes, not small rivers)</li>
+                    <li><strong>Sentinel-1:</strong> 5-20m (radar)</li>
+                </ul>
+                <p><em>A 10m pixel means you can't see anything smaller than 10×10 meters. A car is invisible; a football field is a few pixels.</em></p>
+            </div>
+
+            <div class="term-definition">
+                <h4>⏱️ Temporal Resolution (Revisit Time)</h4>
+                <p>How often does the satellite pass over the same spot?</p>
+                <ul>
+                    <li><strong>Sentinel-2:</strong> Every 2-3 days at mid-latitudes (but may be cloudy)</li>
+                    <li><strong>Sentinel-1:</strong> Every 6 days (works through clouds)</li>
+                </ul>
+                <p><em>Cloud-free images might only be available every few weeks. This is why radar (SAR) is crucial for flood monitoring.</em></p>
+            </div>
+        </section>
+
+        <!-- GNSS Basics -->
+        <section id="gnss-basics" class="section">
+            <h1>GNSS &amp; Positioning for Developers</h1>
+            <p>GNSS (Global Navigation Satellite Systems) provides positioning and timing. In Europe, the main systems are Galileo and the augmentation system EGNOS.</p>
+            
+            <h2>Why Positioning Matters for Water Monitoring</h2>
+            <div class="card highlight">
+                <p><strong>EO tells us WHAT</strong> is happening (e.g., turbidity at a pixel)<br>
+                <strong>GNSS tells us WHERE and WHEN</strong> a field photo was taken</p>
+            </div>
+            <p>Without precise, authenticated positioning, a malicious actor could fake coordinates to misdirect enforcement or hide illegal discharges.</p>
+
+            <h2>GPS vs Galileo vs EGNOS</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Origin</th>
+                            <th>Typical Accuracy</th>
+                            <th>Special Feature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GPS</strong></td>
+                            <td>USA</td>
+                            <td>~3-5 meters</td>
+                            <td>Most widely supported, no authentication</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Galileo</strong></td>
+                            <td>EU</td>
+                            <td>~1m (Open), &lt;20cm (HAS)</td>
+                            <td>HAS corrections + OSNMA authentication</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EGNOS</strong></td>
+                            <td>EU (Regional)</td>
+                            <td>~1m with integrity</td>
+                            <td>Integrity information for aviation safety</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Key Concepts</h2>
+            
+            <div class="term-definition">
+                <h4>🎯 RTK vs PPP</h4>
+                <p><strong>RTK (Real-Time Kinematic):</strong> Requires a nearby base station + cellular connection. Very accurate (~2cm) but infrastructure-dependent.<br>
+                <strong>PPP (Precise Point Positioning):</strong> Uses satellite-broadcast corrections. Works anywhere but needs convergence time (~5 min).</p>
+                <p><em>Galileo HAS uses PPP - crucial for remote areas where there's no cellular coverage (e.g., river basins, disaster zones).</em></p>
+            </div>
+
+            <div class="term-definition">
+                <h4>🔐 Spoofing</h4>
+                <p>An attacker broadcasts fake GNSS signals to make a receiver report the wrong location. This is why OSNMA (authentication) matters - it cryptographically signs the navigation messages so receivers can verify they're genuine.</p>
+            </div>
+        </section>
+
+        <!-- Sentinel Missions -->
+        <section id="sentinel-missions" class="section">
+            <h1>Sentinel Satellite Missions</h1>
+            <p>The EU Copernicus programme operates several Sentinel missions. For water monitoring, we primarily use Sentinel-1, -2, and -3.</p>
+            
+            <h2>Mission Comparison</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mission</th>
+                            <th>Sensor Type</th>
+                            <th>Resolution</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sentinel-1</strong></td>
+                            <td>SAR (Radar)</td>
+                            <td>5-20m</td>
+                            <td>Flood mapping (works through clouds)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sentinel-2</strong></td>
+                            <td>MSI (Optical, 13 bands)</td>
+                            <td>10-60m</td>
+                            <td>Water quality, land cover</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sentinel-3</strong></td>
+                            <td>OLCI (21 bands)</td>
+                            <td>300m</td>
+                            <td>Large lakes, oceans, color analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Sentinel-2: The Workhorse for Water Quality</h2>
+            <p>Sentinel-2 carries the MSI (MultiSpectral Instrument) with 13 bands specifically chosen to detect vegetation health, water, and land features.</p>
+            
+            <h3>Band Reference</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Band</th>
+                            <th>Wavelength</th>
+                            <th>Resolution</th>
+                            <th>Use in Water Analysis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>B01</td>
+                            <td>443nm (Coastal)</td>
+                            <td>60m</td>
+                            <td>Aerosol correction, Chlorophyll</td>
+                        </tr>
+                        <tr>
+                            <td>B02</td>
+                            <td>490nm (Blue)</td>
+                            <td>10m</td>
+                            <td>Cyanobacteria detection</td>
+                        </tr>
+                        <tr>
+                            <td>B03</td>
+                            <td>560nm (Green)</td>
+                            <td>10m</td>
+                            <td>Water detection (NDWI numerator)</td>
+                        </tr>
+                        <tr>
+                            <td>B04</td>
+                            <td>665nm (Red)</td>
+                            <td>10m</td>
+                            <td>Sediment, organic matter</td>
+                        </tr>
+                        <tr>
+                            <td>B05-B07</td>
+                            <td>705-783nm (Red-edge)</td>
+                            <td>20m</td>
+                            <td>Algal bloom detection (phycocyanin peak)</td>
+                        </tr>
+                        <tr>
+                            <td>B08</td>
+                            <td>842nm (NIR)</td>
+                            <td>10m</td>
+                            <td>Water detection (NDWI denominator)</td>
+                        </tr>
+                        <tr>
+                            <td>B11-B12</td>
+                            <td>1610-2190nm (SWIR)</td>
+                            <td>20m</td>
+                            <td>Moisture, built-up areas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Sentinel-1: Radar for All-Weather Monitoring</h2>
+            <p>SAR (Synthetic Aperture Radar) sends microwave pulses and measures the echo. Unlike optical sensors:</p>
+            <ul>
+                <li>✅ Works through clouds, smoke, and at night</li>
+                <li>✅ Water surfaces appear very dark (specular reflection away from sensor)</li>
+                <li>⚠️ Urban areas create "double-bounce" - floods in cities look bright, not dark</li>
+            </ul>
+
+            <h3>SAR Pre-processing Pipeline</h3>
+            <p>Raw SAR data needs several corrections before use:</p>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>SAR Processing Chain</span>
+                </div>
+                <pre><code>1. Apply Orbit File      → Correct satellite position using precise ephemerides
+2. Thermal Noise Removal → Remove sensor background noise
+3. Radiometric Calibration → Convert DN to backscatter coefficient (σ⁰)
+4. Speckle Filtering     → Remove "salt-and-pepper" noise (Lee/Gamma filter, 5×5 window)
+5. Terrain Correction    → Fix geometric distortions using a DEM
+6. dB Conversion         → σ⁰_dB = 10 × log₁₀(σ⁰_linear)</code></pre>
+            </div>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section id="tech-stack" class="section">
+            <h1>Tech Stack</h1>
+            <p>AquaSync uses a standard web stack extended with geospatial capabilities.</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Technology</th>
+                            <th>Why This Choice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Admin Dashboard</td>
+                            <td>React.js + Leaflet.js</td>
+                            <td>Leaflet is lightweight and has excellent plugin ecosystem for raster/vector layers</td>
+                        </tr>
+                        <tr>
+                            <td>Citizen Reporter</td>
+                            <td>React.js PWA</td>
+                            <td>Camera access, GNSS location API, offline queueing for poor connectivity areas</td>
+                        </tr>
+                        <tr>
+                            <td>Backend</td>
+                            <td>Node.js + Express</td>
+                            <td>Handles REST API, WebSocket for real-time updates, calls to Sentinel Hub</td>
+                        </tr>
+                        <tr>
+                            <td>Database</td>
+                            <td>PostgreSQL + PostGIS</td>
+                            <td>PostGIS adds geometry types and spatial functions (ST_Intersects, ST_Area, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td>Space Data Pipeline</td>
+                            <td>Sentinel Hub + openEO</td>
+                            <td>Cloud-native processing - send scripts to data, not data to scripts</td>
+                        </tr>
+                        <tr>
+                            <td>Raster Processing</td>
+                            <td>GDAL (via Python)</td>
+                            <td>Industry standard for raster-to-vector conversion, reprojection</td>
+                        </tr>
+                        <tr>
+                            <td>AI Verification</td>
+                            <td>Google Gemini 3</td>
+                            <td>Multimodal (image+text), open-vocabulary detection without custom training</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- System Architecture Section -->
+        <section id="system-architecture" class="section">
+            <h1>System Architecture</h1>
+            <p>The architecture follows a standard pattern for geospatial web apps. The unique parts are the satellite processing logic and GNSS authentication.</p>
+            
+            <h2>End-to-End Data Flow</h2>
+            <div class="architecture-flow">
+                <div class="arch-step">
+                    <div class="step-number">1</div>
+                    <h4>Ingestion</h4>
+                    <p>Cron job calls Sentinel Hub Processing API each morning for target bounding box, computing indices (NDWI, turbidity).</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">2</div>
+                    <h4>Storage</h4>
+                    <p>Raster outputs cached. Where needed, converted to polygons via <code>gdal_polygonize</code> and inserted into PostGIS.</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">3</div>
+                    <h4>Citizen Report</h4>
+                    <p>PWA captures photo + EXIF + Galileo/GNSS coords. Posts JSON payload to backend.</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">4</div>
+                    <h4>Fusion</h4>
+                    <p>Backend inserts report into PostGIS, checks spatial intersection with anomaly polygons using <code>ST_Intersects()</code>.</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">5</div>
+                    <h4>Visualization</h4>
+                    <p>React dashboard queries backend via REST/WebSocket, renders satellite layers + verified citizen pins on Leaflet map.</p>
+                </div>
+            </div>
+
+            <h2>Key Integration Points</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Architecture Diagram (Text)</span>
+                </div>
+                <pre><code>┌─────────────────────────────────────────────────────────────────────────┐
+│                              CDSE Cloud                                  │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                      │
+│  │ Sentinel-2  │  │ Sentinel-1  │  │ Sentinel-3  │  (Petabytes of data) │
+│  │   Archive   │  │   Archive   │  │   Archive   │                      │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘                      │
+│         │                │                │                              │
+│  ┌──────▼────────────────▼────────────────▼──────┐                      │
+│  │           Sentinel Hub / openEO               │                      │
+│  │   (Runs YOUR evalscript on THEIR hardware)    │                      │
+│  └──────────────────────┬────────────────────────┘                      │
+└─────────────────────────│────────────────────────────────────────────────┘
+                          │  REST/JSON (indices, stats, images)
+                          ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         AquaSync Backend                                 │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌───────────────┐  │
+│  │  Express    │  │  PostGIS    │  │  Gemini AI  │  │ GDAL (Python) │  │
+│  │  REST API   │  │  Database   │  │  Verifier   │  │ Raster→Vector │  │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └───────────────┘  │
+└─────────│────────────────│────────────────│──────────────────────────────┘
+          │                │                │
+          ▼                ▼                ▼
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           Frontends                                      │
+│  ┌─────────────────────┐          ┌─────────────────────┐               │
+│  │   Admin Dashboard   │          │   Citizen PWA       │               │
+│  │   (React + Leaflet) │          │   (React + Camera)  │               │
+│  └─────────────────────┘          └─────────────────────┘               │
+└─────────────────────────────────────────────────────────────────────────┘</code></pre>
+            </div>
+        </section>
+
+        <!-- CDSE API Section -->
+        <section id="cdse-api" class="section">
+            <h1>Copernicus Data Space Ecosystem (CDSE)</h1>
+            <p>CDSE is the EU's cloud-native platform for Earth Observation data. Think of it as "AWS for satellite data" - instead of downloading terabytes of files, you send processing scripts to where the data lives.</p>
+            
+            <h2>The Paradigm Shift</h2>
+            <div class="feature-grid">
+                <div class="feature-card" style="border-left: 4px solid #ef4444;">
+                    <h4>❌ Old Way (Open Access Hub)</h4>
+                    <p>Download 1GB SAFE files → Process locally → Store results. Slow, bandwidth-heavy, requires big local storage.</p>
+                </div>
+                <div class="feature-card" style="border-left: 4px solid #10b981;">
+                    <h4>✅ New Way (CDSE)</h4>
+                    <p>Send evalscript + AOI + time range → Server processes → Returns 50KB PNG or JSON stats. Fast, minimal bandwidth.</p>
+                </div>
+            </div>
+
+            <h2>API Families Explained</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>API</th>
+                            <th>Protocol</th>
+                            <th>When to Use</th>
+                            <th>Developer Analogy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>STAC</strong></td>
+                            <td>SpatioTemporal Asset Catalog</td>
+                            <td>Discover what data exists for your AOI/time</td>
+                            <td>Like <code>npm search</code> - find packages before installing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OData</strong></td>
+                            <td>OASIS OData v4</td>
+                            <td>Legacy metadata search</td>
+                            <td>SQL-like query syntax over HTTP</td>
+                        </tr>
+                        <tr>
+                            <td><strong>S3</strong></td>
+                            <td>Amazon S3</td>
+                            <td>Bulk download, HPC processing</td>
+                            <td>Mount object storage like a filesystem</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sentinel Hub</strong></td>
+                            <td>REST + evalscripts</td>
+                            <td>On-the-fly processing, visualization</td>
+                            <td>Serverless functions that run on satellite data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>openEO</strong></td>
+                            <td>openEO standard</td>
+                            <td>Complex workflows, datacube analytics</td>
+                            <td>Like Apache Spark for geospatial data</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OGC (WMS/WCS)</strong></td>
+                            <td>OGC standards</td>
+                            <td>Integration with QGIS/ArcGIS</td>
+                            <td>Standard GIS protocols - drop-in compatible</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>STAC: Finding Your Data</h2>
+            <p>Before processing anything, you need to know what's available. STAC returns JSON describing collections and items:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>STAC Query Example</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">// Search for cloud-free Sentinel-2 images over a lake
+const response = await fetch('https://stac.dataspace.copernicus.eu/v1/search', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    collections: ['SENTINEL2_L2A'],
+    bbox: [11.2, 44.1, 11.5, 44.3],  // west, south, east, north
+    datetime: '2026-04-01/2026-04-08',
+    query: {
+      'eo:cloud_cover': { 'lt': 20 }  // Less than 20% clouds
+    },
+    limit: 10
+  })
+});
+
+const data = await response.json();
+// Returns: { features: [{ id: 'S2A_...', geometry: {...}, properties: {...}, assets: {...} }] }</code></pre>
+            </div>
+
+            <div class="card info">
+                <h4>💡 Why Filter at Catalog Level?</h4>
+                <p>Cloud filtering in STAC saves processing credits. If you request a processing job for a cloudy day, you'll pay for computation but get useless results. Filter first, then process only useful scenes.</p>
+            </div>
+
+            <h2>API Endpoint Migration (2026)</h2>
+            <p>Sentinel Hub services migrated to standardized paths. Support both during transition:</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Legacy Path</th>
+                            <th>New Path (use this)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Processing API</td>
+                            <td><code>/api/v1/process</code></td>
+                            <td><code>/process/v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>Statistical API</td>
+                            <td><code>/api/v1/statistics</code></td>
+                            <td><code>/statistics/v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>Catalog API</td>
+                            <td><code>/api/v1/catalog/1.0.0</code></td>
+                            <td><code>/catalog/v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>Batch Processing</td>
+                            <td><code>/api/v2/batch</code></td>
+                            <td><code>/batch/v2</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sentinel Hub Section -->
+        <section id="sentinel-hub" class="section">
+            <h1>Sentinel Hub APIs</h1>
+            <p>Sentinel Hub is the workhorse for real-time satellite data processing. Its core abstraction is the <strong>evalscript</strong>.</p>
+            
+            <h2>Evalscripts: Server-Side Pixel Programs</h2>
+            <p>An evalscript is a JavaScript function that defines how each pixel should be computed. Think of it as a serverless function that runs on every pixel in your area of interest:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Evalscript Structure</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">//VERSION=3
+
+function setup() {
+  // Declare which data sources and bands you need
+  return {
+    input: [{
+      bands: ["B03", "B08"],     // Green and NIR bands
+      units: "REFLECTANCE"       // We want 0-1 reflectance, not raw DN
+    }],
+    output: {
+      bands: 1,                   // Output a single-band image
+      sampleType: "FLOAT32"       // Floating point for index values
+    }
+  };
+}
+
+function evaluatePixel(sample) {
+  // This runs for EVERY PIXEL in your AOI
+  // sample.B03 = green reflectance, sample.B08 = NIR reflectance
+  
+  let ndwi = (sample.B03 - sample.B08) / (sample.B03 + sample.B08);
+  
+  // Return NDWI value. Values > ~0.42 indicate water.
+  return [ndwi];
+}</code></pre>
+            </div>
+
+            <h2>Processing API</h2>
+            <p>Generates images or numeric rasters on the fly. Send evalscript + geometry + time range, get back PNG/TIFF/raw data:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Processing API Request</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">const request = {
+  input: {
+    bounds: {
+      bbox: [11.2, 44.1, 11.5, 44.3],
+      properties: { crs: "http://www.opengis.net/def/crs/EPSG/0/4326" }
+    },
+    data: [{
+      dataFilter: {
+        timeRange: { from: "2026-04-01", to: "2026-04-08" },
+        maxCloudCoverage: 20
+      },
+      type: "sentinel-2-l2a"
+    }]
+  },
+  output: {
+    width: 512,
+    height: 512,
+    responses: [{ identifier: "default", format: { type: "image/tiff" } }]
+  },
+  evalscript: `...your evalscript here...`
+};
+
+const response = await axios.post(
+  'https://sh.dataspace.copernicus.eu/process/v1',
+  request,
+  { headers: { 'Authorization': `Bearer ${token}` }, responseType: 'arraybuffer' }
+);
+// response.data is a GeoTIFF binary</code></pre>
+            </div>
+
+            <h2>Statistical API</h2>
+            <p>Returns JSON statistics (mean, std dev, histograms) without generating images. Critical for monitoring trends across thousands of water bodies:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Statistical API Response</span>
+                </div>
+                <pre><code class="language-json">{
+  "data": [{
+    "interval": { "from": "2026-04-01", "to": "2026-04-08" },
+    "outputs": {
+      "ndwi": {
+        "bands": {
+          "B0": {
+            "stats": {
+              "min": -0.45,
+              "max": 0.89,
+              "mean": 0.52,
+              "stDev": 0.18,
+              "sampleCount": 26214,
+              "noDataCount": 1024
+            },
+            "histogram": {
+              "bins": [[-0.5, 123], [-0.3, 456], ..., [0.9, 89]]
+            }
+          }
+        }
+      }
+    }
+  }]
+}</code></pre>
+            </div>
+
+            <div class="card info">
+                <h4>📊 sampleType Explained</h4>
+                <p><code>FLOAT32</code>: For precise index values (-1 to +1). Use for NDWI, Chlorophyll.<br>
+                <code>UINT16</code>: For integer values (0-65535). Use when mapping to discrete classes or for compact storage.</p>
+            </div>
+
+            <h2>Data Fusion: Combining Multiple Sources</h2>
+            <p>A single evalscript can ingest multiple collections (e.g., Sentinel-1 + Sentinel-2):</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Multi-Source Evalscript</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">//VERSION=3
+function setup() {
+  return {
+    input: [
+      { datasource: "S2L2A", bands: ["B02", "B03", "B04", "SCL"] },
+      { datasource: "S1GRD", bands: ["VV", "VH"] }
+    ],
+    output: { bands: 3, sampleType: "AUTO" }
+  };
+}
+
+function evaluatePixel(samples) {
+  let s2 = samples.S2L2A[0];  // Optical data
+  let s1 = samples.S1GRD[0];  // Radar data
+  
+  // Flood detection: SAR backscatter < threshold AND not cloud in optical
+  let isFlood = (s1.VV < 0.0316) && (s2.SCL !== 8 && s2.SCL !== 9);
+  
+  if (isFlood) {
+    return [0.1, 0.4, 0.9];  // Blue for flooded areas
+  } else {
+    return [s2.B04 * 2.5, s2.B03 * 2.5, s2.B02 * 2.5];  // True color
+  }
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- openEO Section -->
+        <section id="openeo" class="section">
+            <h1>openEO Datacube Analytics</h1>
+            <p>openEO provides a higher-level abstraction than Sentinel Hub - instead of pixel-level evalscripts, you work with <strong>datacubes</strong> and <strong>process graphs</strong>.</p>
+            
+            <h2>What's a Datacube?</h2>
+            <div class="card highlight">
+                <p>A datacube is a multi-dimensional array indexed by:</p>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>X, Y</strong> (spatial dimensions)</li>
+                    <li><strong>T</strong> (temporal dimension - multiple dates)</li>
+                    <li><strong>Bands</strong> (spectral dimension - B02, B03, B08, etc.)</li>
+                </ul>
+            </div>
+            <p>This abstraction hides storage details. You write operations like "reduce temporal dimension by mean" and the backend optimizes execution.</p>
+
+            <h2>Python Workflow</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>openEO Python Example</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-python">import openeo
+
+# 1. Connect and authenticate
+connection = openeo.connect("https://openeo.dataspace.copernicus.eu")
+connection.authenticate_oidc()
+
+# 2. Load datacube (lazy - no data fetched yet)
+cube = connection.load_collection(
+    "SENTINEL2_L2A",
+    spatial_extent={"west": 11.2, "south": 44.1, "east": 11.5, "north": 44.3},
+    temporal_extent=["2026-04-01", "2026-04-08"],
+    bands=["B03", "B04", "B08", "SCL"]
+)
+
+# 3. Cloud masking using Scene Classification Layer (SCL)
+# mask_scl_dilation is a CDSE-specific optimization
+cube = cube.process("mask_scl_dilation", data=cube, scl_band_name="SCL")
+
+# 4. Reduce time dimension → single cloud-free composite
+composite = cube.reduce_dimension(dimension="t", reducer="mean")
+
+# 5. Execute (NOW data is processed and downloaded)
+composite.download("water_composite.tif")  # For small areas
+# OR
+job = composite.execute_batch()             # For large areas (async)</code></pre>
+            </div>
+
+            <h2>User-Defined Functions (UDFs)</h2>
+            <p>When standard processes aren't enough, inject custom Python code via UDFs:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>UDF Example</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-python"># UDF that runs on the backend
+def apply_udf(cube: XarrayDataCube) -> XarrayDataCube:
+    import numpy as np
+    import xarray as xr
+    
+    array = cube.get_array()
+    
+    # Custom water quality calculation
+    b03 = array.sel(bands="B03")
+    b08 = array.sel(bands="B08")
+    
+    ndwi = (b03 - b08) / (b03 + b08)
+    
+    # Classify: 0 = land, 1 = clear water, 2 = turbid water
+    classified = xr.where(ndwi < 0.3, 0, xr.where(ndwi < 0.6, 2, 1))
+    
+    return XarrayDataCube(classified)
+
+# In your workflow:
+cube = cube.apply(process=openeo.UDF(apply_udf))</code></pre>
+            </div>
+
+            <h2>openEO Federation</h2>
+            <p>CDSE participates in openEO federation - workflows can span multiple backends (CDSE + partner platforms like Terrascope). The API orchestrates distributed processing transparently.</p>
+        </section>
+
+        <!-- Spectral Analysis Section -->
+        <section id="spectral-analysis" class="section">
+            <h1>Spectral Analysis Explained</h1>
+            <p>Understanding why we use specific band combinations requires knowing how different materials reflect light.</p>
+            
+            <h2>The Physics of Remote Sensing</h2>
+            <div class="card highlight">
+                <h4>🌊 Why Water Looks Dark in NIR</h4>
+                <p>Water strongly absorbs near-infrared radiation. When the satellite measures NIR (B08), water appears very dark while vegetation and soil appear bright. This contrast is the foundation of water detection indices.</p>
+            </div>
+
+            <h2>Reflectance Signatures</h2>
+            <p>Every material has a unique "spectral signature" - how it reflects different wavelengths:</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Material</th>
+                            <th>Blue (B02)</th>
+                            <th>Green (B03)</th>
+                            <th>Red (B04)</th>
+                            <th>NIR (B08)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Clear Water</strong></td>
+                            <td>Low</td>
+                            <td>Low</td>
+                            <td>Very Low</td>
+                            <td>~0 (absorbed)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Turbid Water</strong></td>
+                            <td>Medium</td>
+                            <td>Medium</td>
+                            <td>Medium</td>
+                            <td>Low</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Algal Bloom</strong></td>
+                            <td>Low</td>
+                            <td>High (green pigment)</td>
+                            <td>Low</td>
+                            <td>Medium (cell scatter)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vegetation</strong></td>
+                            <td>Low</td>
+                            <td>Medium</td>
+                            <td>Low</td>
+                            <td>Very High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bare Soil</strong></td>
+                            <td>Medium</td>
+                            <td>Medium</td>
+                            <td>Medium-High</td>
+                            <td>High</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Why Band Ratios Work</h2>
+            <p>Instead of using absolute reflectance values (which vary with sun angle, atmosphere, etc.), we use <strong>ratios</strong> between bands. This normalizes out many environmental factors:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Index Formula Pattern</span>
+                </div>
+                <pre><code>// Normalized Difference indices follow this pattern:
+index = (band_that_reflects - band_that_absorbs) / (band_that_reflects + band_that_absorbs)
+
+// Result ranges from -1 to +1
+// High positive = target material (e.g., water for NDWI)
+// High negative = opposite material (e.g., vegetation for NDWI)
+// Near zero = mixed or ambiguous</code></pre>
+            </div>
+
+            <h2>Red-Edge: The Algae Detection Sweet Spot</h2>
+            <p>Bands B05-B07 (705-783nm) capture the "red-edge" - a steep rise in vegetation/algae reflectance:</p>
+            <div class="card info">
+                <h4>🔬 Phycocyanin Detection</h4>
+                <p>Cyanobacteria (blue-green algae) contain a pigment called <strong>phycocyanin</strong> that creates a reflectance "bump" between 705-740nm. This signature distinguishes toxic cyanobacteria from harmless green algae. The Maximum Peak Height (MPH) index exploits this.</p>
+            </div>
+        </section>
+
+        <!-- Water Indices Section -->
+        <section id="water-indices" class="section">
+            <h1>Water Quality Indices</h1>
+            <p>These indices convert raw reflectance values into physically meaningful measurements.</p>
+            
+            <h2>NDWI: Water Detection</h2>
+            <div class="formula">
+                <h4>Normalized Difference Water Index</h4>
+                <p><strong>NDWI = (B03 - B08) / (B03 + B08)</strong></p>
+                <p>Green (560nm) - NIR (842nm) / Green + NIR</p>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NDWI Value</th>
+                            <th>Interpretation</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>&gt; 0.42</td>
+                            <td>Definitely water</td>
+                            <td>Apply biochemical indices</td>
+                        </tr>
+                        <tr>
+                            <td>0.2 - 0.42</td>
+                            <td>Mixed pixel or wet soil</td>
+                            <td>Flag as uncertain</td>
+                        </tr>
+                        <tr>
+                            <td>&lt; 0.2</td>
+                            <td>Land, vegetation, built-up</td>
+                            <td>Exclude from water analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card warning">
+                <h4>⚠️ Threshold Tuning</h4>
+                <p>The 0.42 threshold works for most clear water. Highly turbid or shallow water may need lower thresholds (~0.3). Validate against known water bodies in your AOI.</p>
+            </div>
+        </section>
+
+        <!-- Biochemical Indicators Section -->
+        <section id="biochemical-indicators" class="section">
+            <h1>Biochemical Indicators</h1>
+            <p>The Se2WaQ (Sentinel-2 Water Quality) evalscript computes six indicators from empirical models. These are NOT direct measurements - they're statistical correlations validated against field samples.</p>
+            
+            <h2>Indicator Reference</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Indicator</th>
+                            <th>What It Measures</th>
+                            <th>Formula</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Chlorophyll-a</strong></td>
+                            <td>Algae concentration (primary productivity)</td>
+                            <td><code>4.26 × (B03/B01)^3.94</code></td>
+                            <td>mg/m³</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cyanobacteria</strong></td>
+                            <td>Blue-green algae cell density (toxic risk)</td>
+                            <td><code>115530.31 × (B03×B04/B02)^2.38</code></td>
+                            <td>10³ cells/ml</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Turbidity</strong></td>
+                            <td>Water cloudiness (suspended particles)</td>
+                            <td><code>8.93 × (B03/B01) - 6.39</code></td>
+                            <td>NTU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CDOM</strong></td>
+                            <td>Colored Dissolved Organic Matter (brownish tint)</td>
+                            <td><code>537 × exp(-2.93 × B03/B04)</code></td>
+                            <td>mg/l</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DOC</strong></td>
+                            <td>Dissolved Organic Carbon</td>
+                            <td><code>432 × exp(-2.24 × B03/B04)</code></td>
+                            <td>mg/l</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Water Color</strong></td>
+                            <td>Apparent color (Pt-Co scale)</td>
+                            <td><code>25366 × exp(-4.53 × B03/B04)</code></td>
+                            <td>mg Pt/l</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Evalscript Implementation</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Se2WaQ Evalscript (Simplified)</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">//VERSION=3
+function setup() {
+  return {
+    input: [{ bands: ["B01", "B02", "B03", "B04", "B08"] }],
+    output: [
+      { id: "ndwi", bands: 1, sampleType: "FLOAT32" },
+      { id: "chlorophyll", bands: 1, sampleType: "FLOAT32" },
+      { id: "turbidity", bands: 1, sampleType: "FLOAT32" },
+      { id: "cyanobacteria", bands: 1, sampleType: "FLOAT32" }
+    ]
+  };
+}
+
+function evaluatePixel(sample) {
+  // Step 1: Water detection
+  let ndwi = (sample.B03 - sample.B08) / (sample.B03 + sample.B08);
+  
+  // Only compute biochemical indices for water pixels
+  if (ndwi < 0.42) {
+    return { ndwi: [ndwi], chlorophyll: [NaN], turbidity: [NaN], cyanobacteria: [NaN] };
+  }
+  
+  // Step 2: Biochemical indicators (only for water)
+  let chl_a = 4.26 * Math.pow(sample.B03 / sample.B01, 3.94);
+  let turb = 8.93 * (sample.B03 / sample.B01) - 6.39;
+  let cya = 115530.31 * Math.pow((sample.B03 * sample.B04) / sample.B02, 2.38);
+  
+  return {
+    ndwi: [ndwi],
+    chlorophyll: [chl_a],
+    turbidity: [turb],
+    cyanobacteria: [cya]
+  };
+}</code></pre>
+            </div>
+
+            <h2>Trophic State Index (TSI)</h2>
+            <p>Sentinel-3 OLCI provides the Trophic State Index for large lakes (&gt;50 hectares), classifying ecological health:</p>
+            
+            <div class="tsi-scale">
+                <div class="tsi-level oligotrophic">
+                    <span class="tsi-range">0-40</span>
+                    <span class="tsi-name">Oligotrophic</span>
+                    <span class="tsi-desc">Clear water, low nutrients, low algae. Healthy drinking water source.</span>
+                </div>
+                <div class="tsi-level mesotrophic">
+                    <span class="tsi-range">40-60</span>
+                    <span class="tsi-name">Mesotrophic</span>
+                    <span class="tsi-desc">Moderate clarity, some algae. Normal for many lakes.</span>
+                </div>
+                <div class="tsi-level eutrophic">
+                    <span class="tsi-range">60-80</span>
+                    <span class="tsi-name">Eutrophic</span>
+                    <span class="tsi-desc">High nutrients, frequent algal blooms. Swimming advisories possible.</span>
+                </div>
+                <div class="tsi-level hypereutrophic">
+                    <span class="tsi-range">80-100</span>
+                    <span class="tsi-name">Hypereutrophic</span>
+                    <span class="tsi-desc">Severe nutrient overload, toxic blooms likely. Public health risk.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flood Services Section -->
+        <section id="flood-services" class="section">
+            <h1>CEMS &amp; GloFAS Flood Monitoring</h1>
+            <p>The Copernicus Emergency Management Service (CEMS) provides flood forecasting and monitoring. AquaSync uses these to distinguish pollution from natural hydrological events.</p>
+            
+            <h2>Service Architecture</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Type</th>
+                            <th>Resolution</th>
+                            <th>Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>GloFAS</strong></td>
+                            <td>Forecasting (up to 30 days)</td>
+                            <td>0.05° (~5 km)</td>
+                            <td>Probabilistic flood prediction, return period thresholds</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GFM</strong></td>
+                            <td>Monitoring (near-real-time)</td>
+                            <td>20 m</td>
+                            <td>Current flood extent from Sentinel-1 SAR</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>GloFAS: Flood Forecasting</h2>
+            <p>GloFAS couples ECMWF weather forecasts with the LISFLOOD hydrological model:</p>
+            
+            <div class="term-definition">
+                <h4>🌊 Return Period</h4>
+                <p>A "10-year return period flood" means the discharge level that statistically occurs once every 10 years. GloFAS provides thresholds for 2, 5, 10, 20-year events.</p>
+                <p><em>When river discharge exceeds the 2-year threshold, AquaSync adjusts the Pollution Severity Index because high flows dilute pollutants.</em></p>
+            </div>
+
+            <h2>GFM: SAR-Based Flood Monitoring</h2>
+            <p>Global Flood Monitoring uses Sentinel-1 radar to detect water extent regardless of clouds:</p>
+
+            <div class="card info">
+                <h4>🎯 Why This Matters for AquaSync</h4>
+                <p>If high turbidity coincides with a GFM-detected flood, AquaSync classifies it as <strong>"Hydrological Runoff"</strong> instead of <strong>"Point-Source Pollution"</strong>. This dramatically reduces false alarms for regulators.</p>
+            </div>
+        </section>
+
+        <!-- SAR Analysis Section -->
+        <section id="sar-analysis" class="section">
+            <h1>SAR Analysis for Water Detection</h1>
+            <p>Synthetic Aperture Radar works differently from optical sensors and requires understanding of backscatter physics.</p>
+            
+            <h2>How SAR "Sees" Water</h2>
+            <div class="card highlight">
+                <p><strong>Smooth water = specular reflection = dark pixels</strong><br>
+                The radar pulse bounces away from the sensor like a mirror. Very little signal returns.</p>
+                <p><strong>Rough surfaces = diffuse reflection = bright pixels</strong><br>
+                The radar pulse scatters in all directions, including back to the sensor.</p>
+            </div>
+
+            <h2>The Urban Double-Bounce Problem</h2>
+            <p>In cities, flooded areas can appear BRIGHT (not dark) due to "double-bounce" reflection:</p>
+            <ol>
+                <li>Radar hits water surface</li>
+                <li>Bounces to vertical building wall</li>
+                <li>Returns straight back to sensor</li>
+                <li>Result: Very strong signal despite water presence</li>
+            </ol>
+            <p><em>This is why urban flood mapping requires data fusion with optical imagery or interferometric coherence.</em></p>
+
+            <h2>HASARD Algorithm</h2>
+            <p>The GFM system uses HASARD (Hierarchical Split-based Approach for Automatic Rapid Detection):</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>HASARD Processing Flow</span>
+                </div>
+                <pre><code>1. Hierarchical Splitting
+   └── Recursively divide SAR image until homogeneous backscatter (σ⁰_VV) in each tile
+
+2. Statistical Modeling
+   └── Compare current acquisition vs same-orbit reference baseline
+   └── Identify pixels with significant backscatter decrease = new water
+
+3. Region Growing
+   └── Use detected water pixels as seeds
+   └── Grow regions to capture complex plume shapes across tile boundaries
+
+4. Comparison with Reference Water Mask
+   └── Distinguish permanent water bodies from temporary flooding</code></pre>
+            </div>
+        </section>
+
+        <!-- Galileo HAS Section -->
+        <section id="galileo-has" class="section">
+            <h1>Galileo High Accuracy Service (HAS)</h1>
+            <p>HAS provides decimeter-level positioning without ground infrastructure - critical for remote areas.</p>
+            
+            <h2>How HAS Works</h2>
+            <div class="term-definition">
+                <h4>📡 Precise Point Positioning (PPP)</h4>
+                <p>Standard GPS computes position from signal travel time, limited by satellite orbit/clock errors and atmospheric delays.</p>
+                <p>PPP uses correction data (precise orbits, clocks, biases) to remove these errors. Traditional PPP services send corrections via internet. <strong>HAS broadcasts corrections directly from Galileo satellites on the E6-B signal.</strong></p>
+            </div>
+
+            <h2>Performance Specs</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Service Level 1 (Global)</th>
+                            <th>Service Level 2 (Europe)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Horizontal Accuracy (95%)</td>
+                            <td>&lt; 20 cm</td>
+                            <td>&lt; 20 cm</td>
+                        </tr>
+                        <tr>
+                            <td>Vertical Accuracy (95%)</td>
+                            <td>&lt; 40 cm</td>
+                            <td>&lt; 40 cm</td>
+                        </tr>
+                        <tr>
+                            <td>Convergence Time</td>
+                            <td>&lt; 300 seconds</td>
+                            <td>&lt; 100 seconds (with ionospheric corrections)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card highlight">
+                <h4>💡 Why This Matters</h4>
+                <p>In disaster zones, cellular networks are often down. RTK systems fail. But HAS keeps working because corrections come <strong>directly from space</strong> - no ground infrastructure needed.</p>
+            </div>
+        </section>
+
+        <!-- OSNMA Section -->
+        <section id="osnma" class="section">
+            <h1>OSNMA: Anti-Spoofing Authentication</h1>
+            <p>Open Service Navigation Message Authentication adds cryptographic proof that GNSS signals are genuine.</p>
+            
+            <h2>The Spoofing Threat</h2>
+            <div class="card warning">
+                <h4>⚠️ Why Authentication Matters</h4>
+                <p>A sophisticated attacker can broadcast fake GNSS signals that overpower real ones. Your receiver reports a false location. For AquaSync, this could let someone report pollution at wrong coordinates to misdirect enforcement or hide illegal discharges.</p>
+            </div>
+
+            <h2>TESLA Protocol Explained</h2>
+            <p>OSNMA uses delayed key disclosure - the key to verify a message is revealed AFTER the message is already received:</p>
+            
+            <div class="architecture-flow">
+                <div class="arch-step">
+                    <div class="step-number">1</div>
+                    <h4>MAC Sent</h4>
+                    <p>Satellite sends navigation data + MAC (Message Authentication Code). You can't verify it yet.</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">2</div>
+                    <h4>Key Disclosed (30s later)</h4>
+                    <p>Satellite reveals the key used to compute that MAC. Now you can verify.</p>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-step">
+                    <div class="step-number">3</div>
+                    <h4>Chain Verification</h4>
+                    <p>Hash the key recursively until it matches the trusted Root Key you got from ESA.</p>
+                </div>
+            </div>
+
+            <p><em>The genius: An attacker can't forge the MAC without the key, but by the time the key is revealed, the spoofed message is already obsolete.</em></p>
+
+            <h2>Receiver Requirements</h2>
+            <ul>
+                <li>OSNMA-capable hardware (u-blox F9, Septentrio mosaic-X5, etc.)</li>
+                <li>Root public key from European GNSS Service Centre (GSC)</li>
+                <li>Synchronization to Galileo System Time within 30-300 seconds</li>
+            </ul>
+        </section>
+
+        <!-- PostGIS Section -->
+        <section id="postgis" class="section">
+            <h1>PostGIS &amp; GDAL Data Engineering</h1>
+            <p>Geospatial data requires specialized database capabilities and raster processing tools.</p>
+            
+            <h2>PostGIS: Spatial SQL</h2>
+            <p>PostGIS extends PostgreSQL with geometry types and spatial functions:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Common PostGIS Operations</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-sql">-- Create table with geometry column
+CREATE TABLE citizen_reports (
+  id SERIAL PRIMARY KEY,
+  photo_url TEXT,
+  category TEXT,
+  timestamp TIMESTAMPTZ,
+  location GEOMETRY(Point, 4326),  -- WGS84 coordinates
+  accuracy_meters FLOAT
+);
+
+-- Create spatial index (CRITICAL for performance)
+CREATE INDEX idx_reports_location ON citizen_reports USING GIST(location);
+
+-- Find reports within an anomaly polygon
+SELECT r.* FROM citizen_reports r, anomaly_polygons a
+WHERE ST_Intersects(r.location, a.geom)
+  AND a.indicator = 'high_cyanobacteria';
+
+-- Find reports within 500m of a specific point
+SELECT * FROM citizen_reports
+WHERE ST_DWithin(
+  location,
+  ST_SetSRID(ST_MakePoint(11.35, 44.2), 4326),
+  0.005  -- ~500m in degrees (approximate)
+);
+
+-- Calculate area of flood extent polygons
+SELECT id, ST_Area(geom::geography) / 1000000 AS area_km2
+FROM flood_extents;</code></pre>
+            </div>
+
+            <h2>GDAL: Raster to Vector Conversion</h2>
+            <p>Satellite outputs are rasters (grids). To join with PostGIS vectors, convert with <code>gdal_polygonize</code>:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>GDAL Polygonization</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-bash"># Convert NDWI raster to polygons, write directly to PostGIS
+python gdal_polygonize.py ndwi_output.tif \
+  -f "PostgreSQL" \
+  PG:"host=localhost dbname=aquasync user=postgres" \
+  water_polygons \
+  ndwi_value
+
+# The DN (Digital Number) field preserves the original spectral value
+# Now you can do spatial joins with property parcels, admin boundaries, etc.</code></pre>
+            </div>
+
+            <h2>Proportional Grid Calculation</h2>
+            <p>When you need to aggregate pollution values to a regular grid:</p>
+
+            <div class="formula">
+                <h4>Area-Weighted Grid Cell Value</h4>
+                <p><strong>V<sub>grid</sub> = Σ(intersection_area × polygon_value) / grid_cell_area</strong></p>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>PostGIS Grid Aggregation</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-sql">-- Calculate area-weighted pollution index per grid cell
+SELECT 
+  grid.id,
+  grid.geom,
+  SUM(ST_Area(ST_Intersection(grid.geom, poly.geom)) * poly.pollution_value) 
+    / ST_Area(grid.geom) AS weighted_value
+FROM target_grid grid
+JOIN pollution_polygons poly 
+  ON ST_Intersects(grid.geom, poly.geom)
+GROUP BY grid.id, grid.geom;</code></pre>
+            </div>
+        </section>
+
+        <!-- Authentication Section -->
+        <section id="authentication" class="section">
+            <h1>API Authentication</h1>
+            <p>CDSE uses OAuth2/OIDC for API authentication. The backend needs machine-to-machine credentials.</p>
+            
+            <h2>Identity Endpoints</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Identity Provider</td>
+                            <td><code>https://identity.dataspace.copernicus.eu</code></td>
+                        </tr>
+                        <tr>
+                            <td>Realm</td>
+                            <td><code>CDSE</code></td>
+                        </tr>
+                        <tr>
+                            <td>Token Endpoint</td>
+                            <td><code>/auth/realms/CDSE/protocol/openid-connect/token</code></td>
+                        </tr>
+                        <tr>
+                            <td>Grant Type</td>
+                            <td><code>client_credentials</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2>Node.js Implementation</h2>
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Token Management with AXIOS Interceptors</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-javascript">const axios = require('axios');
+
+// Token cache
+let accessToken = null;
+let tokenExpiry = 0;
+
+async function getToken() {
+  if (accessToken && Date.now() < tokenExpiry - 60000) {
+    return accessToken;  // Return cached token if not expiring soon
+  }
+  
+  const response = await axios.post(
+    'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token',
+    new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: process.env.CDSE_CLIENT_ID,
+      client_secret: process.env.CDSE_SECRET
+    }),
+    { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+  );
+  
+  accessToken = response.data.access_token;
+  tokenExpiry = Date.now() + (response.data.expires_in * 1000);
+  return accessToken;
+}
+
+// AXIOS instance with auto-refresh
+const cdseClient = axios.create({
+  baseURL: 'https://sh.dataspace.copernicus.eu'
+});
+
+cdseClient.interceptors.request.use(async (config) => {
+  const token = await getToken();
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+cdseClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401 && !error.config._retry) {
+      error.config._retry = true;
+      accessToken = null;  // Force refresh
+      const token = await getToken();
+      error.config.headers.Authorization = `Bearer ${token}`;
+      return cdseClient(error.config);
+    }
+    return Promise.reject(error);
+  }
+);</code></pre>
+            </div>
+        </section>
+
+        <!-- AI Verification Section -->
+        <section id="ai-verification" class="section">
+            <h1>Multimodal AI Verification</h1>
+            <p>Citizen reports are noisy: misinterpretations, old photos, or deliberate fraud. AquaSync uses Google Gemini to validate submissions.</p>
+            
+            <h2>Open-Vocabulary Detection</h2>
+            <p>Instead of training custom CNNs for each pollution type, Gemini accepts natural language prompts:</p>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Example Prompt</span>
+                </div>
+                <pre><code>Analyze this water photo. Identify any of the following:
+- Rusted discharge pipes
+- Oil slicks (iridescent surface)
+- Foaming or frothing water
+- Algal blooms (green/blue-green coloring)
+- Floating debris or plastic
+- Sewage indicators
+
+For each finding, describe its location in the image and confidence level.</code></pre>
+            </div>
+
+            <div class="card highlight">
+                <h4>💡 No Retraining Required</h4>
+                <p>When a new pollution type appears (e.g., microplastic sheens), just update the prompt. Traditional CV would require collecting labeled samples and retraining.</p>
+            </div>
+
+            <h2>Physical Reasoning</h2>
+            <p>Gemini goes beyond object detection to infer material properties and context:</p>
+            
+            <div class="term-definition">
+                <h4>🧠 Attribute Inference</h4>
+                <p><em>"The liquid is observed to be highly opaque with an iridescent surface. The physicality of the discharge is consistent with oil-contaminated effluent rather than natural biogenic oils."</em></p>
+                <p>The model reasons about viscosity, color consistency, and surface behavior based on its world knowledge.</p>
+            </div>
+
+            <h2>Temporal Consistency Check</h2>
+            <p>The AI cross-references photo content with metadata:</p>
+            <ol>
+                <li>Analyze shadow angles and lighting in the photo</li>
+                <li>Infer approximate time of day</li>
+                <li>Compare against reported GNSS timestamp</li>
+                <li>Calculate expected solar azimuth for that location/date</li>
+                <li>Flag mismatches (e.g., evening shadows at 10 AM timestamp)</li>
+            </ol>
+        </section>
+
+        <!-- Fraud Detection Section -->
+        <section id="fraud-detection" class="section">
+            <h1>Fraud Detection</h1>
+            <p>A common fraud technique is re-photographing a screen to submit historical images as "live" evidence.</p>
+            
+            <h2>Moiré Pattern Detection</h2>
+            <div class="card info">
+                <h4>🔬 What is Moiré?</h4>
+                <p>When a camera photographs a screen, the camera's sensor grid interferes with the display's pixel grid, creating wavy interference patterns called <strong>moiré</strong>. These are invisible to the naked eye but detectable by algorithms.</p>
+            </div>
+
+            <h2>Detection Metrics</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Calculation</th>
+                            <th>Fraud Signature</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sharpness</strong></td>
+                            <td>Std deviation of Laplacian-filtered grayscale</td>
+                            <td>Anomalously high values in areas that should be smooth (sky, water)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Colorfulness</strong></td>
+                            <td>Avg std deviation of LAB A/B channels</td>
+                            <td>Characteristic chromatic aberration from screen subpixels</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Frequency Analysis</strong></td>
+                            <td>FFT spectrum analysis</td>
+                            <td>Periodic patterns at screen refresh frequencies</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span>Sharpness Metric (Python)</span>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code class="language-python">import cv2
+import numpy as np
+
+def calculate_sharpness(image_path):
+    """High sharpness in smooth areas = potential screen capture"""
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    laplacian = cv2.Laplacian(img, cv2.CV_64F)
+    return laplacian.std()
+
+def calculate_colorfulness(image_path):
+    """Screen captures have characteristic LAB color distortion"""
+    img = cv2.imread(image_path)
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    a_std = np.std(lab[:,:,1])
+    b_std = np.std(lab[:,:,2])
+    return (a_std + b_std) / 2
+
+# Thresholds determined empirically from known fraud samples
+SHARPNESS_THRESHOLD = 150  # Typical natural photo: 50-100
+COLORFULNESS_THRESHOLD = 40  # Typical natural photo: 20-35</code></pre>
+            </div>
+
+            <div class="card warning">
+                <h4>🚫 Evidence Void</h4>
+                <p>High-confidence fraud detection triggers an "Evidence Void" flag. The report is logged but excluded from trend analysis and regulatory dashboards.</p>
+            </div>
+        </section>
+
+        <!-- Glossary Section -->
+        <section id="glossary" class="section">
+            <h1>Glossary</h1>
+            <p>Quick reference for terms used throughout this documentation.</p>
+            
+            <div class="term-definition">
+                <h4>AOI (Area of Interest)</h4>
+                <p>The geographic region you're analyzing. Usually specified as a bounding box (west, south, east, north) or GeoJSON polygon.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>Backscatter (σ⁰)</h4>
+                <p>The amount of radar signal that returns to the sensor. Water is low, rough surfaces are high. Measured in decibels (dB).</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>BOA (Bottom-of-Atmosphere)</h4>
+                <p>Reflectance at Earth's surface after atmospheric correction. Use Level-2A products for BOA.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>CDOM</h4>
+                <p>Colored Dissolved Organic Matter. Dissolved substances that give water a brownish/yellowish tint. Indicator of organic pollution.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>Evalscript</h4>
+                <p>JavaScript code that runs server-side on Sentinel Hub, defining how to process each pixel. Similar to a serverless function.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>GRD (Ground Range Detected)</h4>
+                <p>Sentinel-1 SAR product format. Pixels represent radar backscatter projected onto the ground surface.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>L2A (Level-2A)</h4>
+                <p>Sentinel-2 product with atmospheric correction applied. Contains surface reflectance instead of top-of-atmosphere radiance.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>NDWI</h4>
+                <p>Normalized Difference Water Index. (Green - NIR) / (Green + NIR). Values >0.42 typically indicate water.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>NIR (Near-Infrared)</h4>
+                <p>Wavelengths around 700-1100nm. Invisible to humans, strongly absorbed by water, strongly reflected by vegetation.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>OSNMA</h4>
+                <p>Open Service Navigation Message Authentication. Galileo's cryptographic protection against GPS/GNSS spoofing.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>PPP (Precise Point Positioning)</h4>
+                <p>GNSS technique using satellite-broadcast corrections to achieve cm-level accuracy without base stations.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>Red-Edge</h4>
+                <p>Wavelengths 700-750nm where vegetation/algae reflectance rises steeply. Critical for detecting algal blooms.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>SAR (Synthetic Aperture Radar)</h4>
+                <p>Radar imaging that works through clouds and at night. Measures surface roughness and moisture.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>SCL (Scene Classification Layer)</h4>
+                <p>Sentinel-2 L2A band classifying each pixel as cloud, shadow, vegetation, water, etc. Used for masking.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>STAC</h4>
+                <p>SpatioTemporal Asset Catalog. Standard JSON format for describing geospatial data collections and items.</p>
+            </div>
+            
+            <div class="term-definition">
+                <h4>TOA (Top-of-Atmosphere)</h4>
+                <p>Radiance measured at satellite altitude, before atmospheric correction. Use Level-1C products.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>TSI (Trophic State Index)</h4>
+                <p>0-100 scale measuring lake biological productivity. Higher = more algae = more pollution risk.</p>
+            </div>
+
+            <div class="term-definition">
+                <h4>Turbidity (NTU)</h4>
+                <p>Nephelometric Turbidity Units. Measures water cloudiness from suspended particles. Higher = more particles.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>AquaSync Developer Documentation • EU Space Infrastructure</p>
+            <p>Powered by Copernicus, Galileo, CDSE, and CEMS</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
